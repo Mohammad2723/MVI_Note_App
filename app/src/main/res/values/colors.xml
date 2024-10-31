@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="background">@color/whiteSmoke</color>
+    <color name="primary">@color/green</color>
+    <color name="onPrimary">@color/whiteSmoke</color>
+    <color name="onBackground">@color/darkSlategray</color>
+    <color name="highPriorityColor">@color/red</color>
+    <color name="mediumPriorityColor">@color/aqua</color>
+    <color name="lowPriorityColor">@color/yellow</color>
+    <color name="container">@color/grayDark</color>
+    <color name="onContainer">@color/darkSlategray70</color>
+
+
+
+
+    <!--    myColor-->
+    <color name="bg">#F6F6F6</color>
+    <color name="grayLight">#f6f8f9</color>
+    <color name="grayDark">#737980</color>
+    <color name="yellowLight">#faf6e9</color>
+    <color name="yellowDark">#b89b36</color>
+    <color name="red">#E91E63</color>
+    <color name="aqua">#00BCD4</color>
+    <color name="yellow">#FFC107</color>
+    <color name="green">#2fdf84</color>
+
+    <color name="whiteSmoke">#f6f6f6</color>
+    <color name="darkSlategray">#202d3d</color>
+    <color name="darkSlategray70">#B3202d3d</color>
+    <color name="tartOrange">#F24C4C</color>
+    <color name="deepKoamaru">#363062</color>
+    <color name="metallicYellow">#FBCB0A</color>
+    <color name="charcoal">#354259</color>
+    <color name="shadowBlue">#7490A8</color>
+    <color name="pewterBlue">#92A9BD</color>
+    <color name="lotion">#fdfdfd</color>
+</resources>

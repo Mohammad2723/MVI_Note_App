@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:background="@color/background"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.main.MainActivity">
+
+    <!--Toolbar-->
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/notesToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/green"
+        android:elevation="5dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:menu="@menu/main_menu"
+        app:title="Notes"
+        app:titleCentered="true"
+        app:titleTextColor="@color/whiteSmoke" />
+
+    <!--notesList-->
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/noteList"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:paddingTop="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/notesToolbar" />
+
+
+    <!--       empty lay-->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/emptyLay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="parent">
+
+        <include layout="@layout/empty" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!--fab-->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:backgroundTint="@color/green"
+        android:contentDescription="@string/fab_add_note"
+        android:src="@drawable/round_add_24"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:tint="@color/whiteSmoke" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
