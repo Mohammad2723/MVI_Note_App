@@ -2,16 +2,12 @@ package com.github.ebrahimi16153.mvinoteapp.viewmodel.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.github.ebrahimi16153.mvinoteapp.viewmodel.note.NoteState
-import com.github.ebrahimi16153.noteapp.data.model.NoteModel
 import com.github.ebrahimi16153.noteapp.data.repository.MainRepository
 import com.github.ebrahimi16153.noteapp.utils.Constant.ALL
-import com.github.ebrahimi16153.noteapp.utils.Constant.HIGH
-import com.github.ebrahimi16153.noteapp.utils.Constant.LOW
-import com.github.ebrahimi16153.noteapp.utils.Constant.MEDIUM
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -20,8 +16,8 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(private val mainRepository: MainRepository) : ViewModel() {
 
     val intent = Channel<MainIntent>()
-    private var _state = MutableStateFlow<MainState>(MainState.Idle)
-    val state get() = _state
+    private var _state = MutableStateFlow<MainState>(MainState.Empty)
+    val state: StateFlow<MainState> get() = _state
 
     init {
         handelState()
@@ -31,11 +27,9 @@ class MainViewModel @Inject constructor(private val mainRepository: MainReposito
         intent.consumeAsFlow().collect { itIntent ->
 
             when (itIntent) {
-                MainIntent.NoteListAll -> fillList(ALL)
-                MainIntent.NoteListHigh -> fillList(HIGH)
-                MainIntent.NoteListLow -> fillList(LOW)
-                MainIntent.NoteListMedium -> fillList(MEDIUM)
-                is MainIntent.SearchNote -> fillSearchQuery(itIntent)
+                is MainIntent.NoteListAll -> getAllNotes()
+                is MainIntent.NoteListByPriority -> getNotsByPriority(itIntent)
+                is MainIntent.SearchNote -> getNotesBySearchQuery(itIntent)
                 is MainIntent.DeleteNote -> deleteNote(itIntent)
             }
         }
@@ -43,50 +37,31 @@ class MainViewModel @Inject constructor(private val mainRepository: MainReposito
 
 
 
-
-    private fun fillList(priority: String) = viewModelScope.launch {
-        when (priority) {
-            ALL -> {
-                mainRepository.getNotes().collect { itNotes ->
-                    if (itNotes.isNotEmpty())
-                        _state.value = MainState.ListState(notes = itNotes)
-                    else
-                        _state.value = MainState.Empty
-
-                }
+    private fun getAllNotes() = viewModelScope.launch {
+        mainRepository.getNotes().collect { itNotes ->
+            if (itNotes.isNotEmpty()) {
+                _state.value = MainState.ListState(itNotes)
+            } else {
+                _state.value = MainState.Empty
             }
-
-            HIGH -> {
-                mainRepository.filterByPriority(HIGH).collect { itNotes ->
-                    if (itNotes.isNotEmpty())
-                        _state.value = MainState.ListState(notes = itNotes)
-                    else
-                        _state.value = MainState.Empty
-                }
-            }
-
-            MEDIUM -> {
-                mainRepository.filterByPriority(MEDIUM).collect { itNotes ->
-                    if (itNotes.isNotEmpty())
-                        _state.value = MainState.ListState(notes = itNotes)
-                    else
-                        _state.value = MainState.Empty
-                }
-            }
-
-            LOW -> {
-                mainRepository.filterByPriority(LOW).collect { itNotes ->
-                    if (itNotes.isNotEmpty())
-                        _state.value = MainState.ListState(notes = itNotes)
-                    else
-                        _state.value = MainState.Empty
-                }
-            }
-
         }
     }
 
-    private fun fillSearchQuery(intent: MainIntent.SearchNote) = viewModelScope.launch {
+
+    private fun getNotsByPriority(intent: MainIntent.NoteListByPriority) = viewModelScope.launch {
+        when (val priority = intent.priority) {
+            ALL -> getAllNotes()
+            else -> {
+                mainRepository.filterByPriority(priority).collect { itNotes ->
+                    _state.value = MainState.ListState(itNotes)
+                }
+
+            }
+        }
+
+    }
+
+    private fun getNotesBySearchQuery(intent: MainIntent.SearchNote) = viewModelScope.launch {
         mainRepository.getSearchNote(intent.searchQuery).collect { itNotes ->
             if (itNotes.isNotEmpty())
                 _state.value = MainState.ListState(notes = itNotes)
@@ -97,7 +72,7 @@ class MainViewModel @Inject constructor(private val mainRepository: MainReposito
 
 
     private fun deleteNote(intent: MainIntent.DeleteNote) = viewModelScope.launch {
-           MainState.DeleteNote(mainRepository.delete(intent.note))
+        MainState.DeleteNote(mainRepository.delete(intent.note))
     }
 
 

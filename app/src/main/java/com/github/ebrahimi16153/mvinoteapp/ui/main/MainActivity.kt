@@ -63,23 +63,7 @@ class MainActivity : AppCompatActivity() {
                     R.id.main_menu_Filter -> {
                         filterDialogByPriority { priority ->
                             lifecycleScope.launch {
-                                when (priority) {
-                                    ALL -> {
-                                        mainViewModel.intent.send(MainIntent.NoteListAll)
-                                    }
-
-                                    HIGH -> {
-                                        mainViewModel.intent.send(MainIntent.NoteListHigh)
-                                    }
-
-                                    LOW -> {
-                                        mainViewModel.intent.send(MainIntent.NoteListLow)
-                                    }
-
-                                    MEDIUM -> {
-                                        mainViewModel.intent.send(MainIntent.NoteListMedium)
-                                    }
-                                }
+                              mainViewModel.intent.send(MainIntent.NoteListByPriority(priority = priority))
                             }
                         }
 
@@ -92,7 +76,6 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
-
             // state
             lifecycleScope.launch {
                 mainViewModel.intent.send(MainIntent.NoteListAll)
@@ -103,14 +86,11 @@ class MainActivity : AppCompatActivity() {
                             emptyLay.isVisible = true
                         }
 
-                        is MainState.Idle -> {}
-
                         is MainState.ListState -> {
                             noteList.isVisible = true
                             emptyLay.isVisible = false
                             showList(itSate)
                         }
-
                         is MainState.DeleteNote -> {}
                     }
                 }
@@ -137,9 +117,10 @@ class MainActivity : AppCompatActivity() {
 
                     EDIT -> {
                         // send noteID as bundle to NoteFragment
+                        val noteID = noteModel.id
                         val bundle = Bundle()
                         val noteFragment = NoteFragment()
-                        bundle.putInt(ID_KEY, noteModel.id)
+                        bundle.putInt(ID_KEY, noteID)
                         noteFragment.arguments = bundle
                         noteFragment.show(supportFragmentManager, noteFragment.tag)
 
